@@ -4,7 +4,6 @@ const addRole = (req, res) => {
   const { role, permissions } = req.body;
   const newRole = new roleModel({
     role,
-    email,
     permissions,
   });
   newRole
