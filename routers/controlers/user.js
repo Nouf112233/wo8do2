@@ -2,6 +2,8 @@ const userModel = require("./../../db/models/user");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const SALT = Number(process.env.SALT);
+const jwt =require("jsonwebtoken");
+const secret=process.env.secretKey;
 
 const register = async (req, res) => {
   const { email, password, role } = req.body;
@@ -36,14 +38,29 @@ const login=(req,res)=>{
         {
             if(result.email==email)
             {
-                const hashedPass=await bcrypt.compare(password,result.password)
+                
+                const hashedPass=await bcrypt.compare(password,result.password);
                 if(hashedPass)
                 {
-                    res.status(200).json(result);
+                    const payload={
+                        role:result.role,
+                    };
+                    const options={expiresIn:'60m'};
+                    const token=await jwt.sign(payload,secret,options);
+                    res.status(200).json({result,token});
+                }else{
+                    res.status(400).json("invalid email or password");
                 }
+            }else{
+                res.status(400).json("invalid email or password");
             }
+        }else{
+            res.status(404).json("email does not exit");
         }
+    })
+    .catch((err)=>{
+        res.status(400).json(err);
     })
 }
 
-module.exports = { register };
+module.exports = { register,login };
