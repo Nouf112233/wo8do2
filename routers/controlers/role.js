@@ -10,11 +10,24 @@ const addRole = (req, res) => {
   newRole
     .save()
     .then((result) => {
-      res.json(result);
+      res.status(201).json(result);
     })
     .catch((err) => {
-      res.send(err);
+        res.status(400).json(err);
     });
 };
 
-module.exports = { addRole };
+const getRoles = (req, res) =>{
+    roleModel
+    .find({})
+    .then((result) => {
+        res.status(201).json(result);
+      
+    })
+    .catch((err) => {
+        res.status(400).json(err);
+      
+    });
+  };
+
+module.exports = { addRole,getRoles };
